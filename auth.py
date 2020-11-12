@@ -2,8 +2,8 @@ import base64
 import requests
 import datetime
 
-client_id = "251e552405a74117a5c1448d900fe03b"
-client_secret = "0999753d6a6245c6a04c1b563fba1020"
+client_id = ""
+client_secret = ""
 
 token_url = "https://accounts.spotify.com/api/token"
 method = "POST"
