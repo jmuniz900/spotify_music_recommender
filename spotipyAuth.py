@@ -1,10 +1,11 @@
-import os
-import sys
-import json
-import webbrowser
-import sqlite3
-import spotipy.util as util
-from json.decoder import JSONDecodeError
+import os                                   #Basic Operating System Library
+import sys                                  #
+import json                                 #For encoding/decoding JSON files
+import webbrowser                           #To be able to use web browser functionalities
+import mysql.connector                      #To create, store, and pick up sql database items
+from mysql.connector import errorcode
+import spotipy.util as util                 #
+from json.decoder import JSONDecodeError    #
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from subprocess import call
@@ -35,15 +36,37 @@ except:
 #Create the SpotifyObject & collect current playing song.
 
 spotifyObject = spotipy.Spotify(auth=token)
-try:
-    userSongPlaying = spotifyObject.current_user_playing_track()
-except:
-    print("Make sure you're playing something on Spotify first before we get started!")
 
-print(json.dumps(userSongPlaying, sort_keys=True, indent=4))
-#print(json.dumps(VARIABLE, sort_keys=True, indent=4))
+userSongPlaying = spotifyObject.current_user_playing_track() #returns a json dump of data
 
-songName = userSongPlaying['item']['name']
-#songArtist = userSongPlaying['item']['album']['artists']['name']
-print(songName)
+#print(json.dumps(userSongPlaying, sort_keys=True, indent=4))
+#print(json.dumps(VARIABLE, sort_keys=True, indent=4)) <----- format for all the info
+
+songName = userSongPlaying['item']['name'] #returns the song name 
+#songGenres = userSongPlaying['genres']
+songArtist = userSongPlaying['item']['artists']
+
+for info in songArtist:
+    print(info['name'])
+
+print(songName) #<--- this works
+
+#print(songGenres)
 #print(songArtist)
+
+#Next, we put this information into an sql
+try:
+    musicDatabase = mysql.connector.connect(
+        host="localhost",
+        user="username",
+        password="password"
+    )
+except mysql.connector.Error as err:
+    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        print("Username or password is wrong!")
+    elif err.errno == errorcode.ER_BAD_DB_ERROR:
+        print("Database does not exist!")
+    else:
+        print(err)
+else:
+    print(musicDatabase)
